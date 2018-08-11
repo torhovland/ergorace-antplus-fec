@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
+using NavigationViewBackRequestedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs;
 using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -42,7 +43,18 @@ namespace ErgoRaceAntPlus
 
         private void TopLevelNav_OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
+            TopLevelNav.IsBackEnabled = true;
+            TopLevelNav.SelectedItem = args.IsSettingsInvoked ? null : TopLevelNav.MenuItems[0];
             ContentFrame.Navigate(args.IsSettingsInvoked ? typeof(SettingsPage) : typeof(DashboardPage));
+        }
+
+        private void TopLevelNav_OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            if (ContentFrame.CanGoBack)
+                ContentFrame.GoBack();
+
+            TopLevelNav.SelectedItem = ContentFrame.Content is SettingsPage ? null : TopLevelNav.MenuItems[0];
+            TopLevelNav.IsBackEnabled = ContentFrame.CanGoBack;
         }
     }
 }

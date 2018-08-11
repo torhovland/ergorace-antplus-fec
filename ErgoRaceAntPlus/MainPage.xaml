@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <controls:NavigationView x:Name="TopLevelNav" PaneDisplayMode="Top" IsBackEnabled="True" Loaded="TopLevelNav_OnLoaded" ItemInvoked="TopLevelNav_OnItemInvoked">
+    <controls:NavigationView x:Name="TopLevelNav" PaneDisplayMode="Top" Loaded="TopLevelNav_OnLoaded" ItemInvoked="TopLevelNav_OnItemInvoked" BackRequested="TopLevelNav_OnBackRequested">
         <controls:NavigationView.MenuItems>
             <controls:NavigationViewItem Content="Dashboard" x:Name="Dashboard" />
         </controls:NavigationView.MenuItems>
