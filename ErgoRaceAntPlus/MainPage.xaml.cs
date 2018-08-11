@@ -30,11 +30,6 @@ namespace ErgoRaceAntPlus
             this.InitializeComponent();
         }
 
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void TopLevelNav_OnLoaded(object sender, RoutedEventArgs e)
         {
             TopLevelNav.SelectedItem = TopLevelNav.MenuItems[0];
