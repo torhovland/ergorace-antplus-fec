@@ -5,15 +5,15 @@
     xmlns:local="using:ErgoRaceAntPlus"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <CommandBar>
-            <CommandBar.Content>
-                <Grid/>
-            </CommandBar.Content>
-            <AppBarButton Icon="Setting" Label="Settings"/>
-        </CommandBar>
-    </Grid>
+    <controls:NavigationView x:Name="TopLevelNav" PaneDisplayMode="Top" IsBackEnabled="True" Loaded="TopLevelNav_OnLoaded" ItemInvoked="TopLevelNav_OnItemInvoked">
+        <controls:NavigationView.MenuItems>
+            <controls:NavigationViewItem Content="Dashboard" x:Name="Dashboard" />
+        </controls:NavigationView.MenuItems>
+        <Frame x:Name="ContentFrame"></Frame>
+    </controls:NavigationView>
+
 </Page>
