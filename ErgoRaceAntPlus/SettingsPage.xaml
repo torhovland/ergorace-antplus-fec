@@ -8,8 +8,8 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Button Content="Settings" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top"/>
-
-    </Grid>
+    <StackPanel Orientation="Vertical" Margin="50">
+        <TextBlock>Select which COM port the bike is connected to.</TextBlock>
+        <ComboBox Name="ComPorts" />
+    </StackPanel>
 </Page>
