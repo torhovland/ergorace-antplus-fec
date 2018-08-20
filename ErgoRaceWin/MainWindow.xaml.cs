@@ -35,7 +35,7 @@ namespace ErgoRaceWin
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             antDevice = new ANT_Device();
-            var networkKeyString = File.ReadAllLines("ant-network-key.bin").FirstOrDefault(line => !line.StartsWith("#"))?.Trim();
+            var networkKeyString = File.ReadAllLines("ant-network.key").FirstOrDefault(line => !line.StartsWith("#"))?.Trim();
             antDevice.setNetworkKey(0, StringToByteArray(networkKeyString));
             antDevice.deviceResponse += new ANT_Device.dDeviceResponseHandler(device0_deviceResponse);
             antDevice.getChannel(0).channelResponse += new dChannelResponseHandler(d0channel0_channelResponse);
