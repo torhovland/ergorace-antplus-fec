@@ -81,6 +81,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AntCommunication.cs" />
+    <Compile Include="Bike.cs" />
+    <Compile Include="MainViewModel.cs" />
+    <Compile Include="ObservableObject.cs" />
     <Compile Include="ScrollingTextBox.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

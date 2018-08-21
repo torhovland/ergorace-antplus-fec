@@ -7,7 +7,24 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Loaded="MainWindow_OnLoaded">
-    <Grid>
-        <local:ScrollingTextBox x:Name="txtLog" HorizontalAlignment="Left" Height="399" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="772" VerticalScrollBarVisibility="Visible" />
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Grid x:Name="MainGrid" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="400" />
+        </Grid.RowDefinitions>
+        <local:ScrollingTextBox x:Name="txtLog" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="399" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="400" VerticalScrollBarVisibility="Visible" />
+        <Label x:Name="txtHeartRate" Grid.Row="0" Grid.Column="1" Content="{Binding Path=HeartRate}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <Label x:Name="txtCadence" Grid.Row="0" Grid.Column="2" Content="{Binding Path=Cadence}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <Label x:Name="txtTargetPower" Grid.Row="0" Grid.Column="3" Content="{Binding Path=TargetPower}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <Label x:Name="txtCurrentPower" Grid.Row="0" Grid.Column="4" Content="{Binding Path=CurrentPower}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
     </Grid>
 </Window>
