@@ -99,14 +99,16 @@ namespace ErgoRaceWin
 
         private void SetTrainerBroadcastMessage(byte eventNumber)
         {
+            var power = model.CurrentPower;
+
             byte[] randArray = new byte[8];
             randArray[0] = 0x19; // Trainer Data Page
             randArray[1] = eventNumber;
             randArray[2] = 78;
             randArray[3] = 0;
             randArray[4] = 0;
-            randArray[5] = 125;
-            randArray[6] = 0;
+            randArray[5] = (byte)power;
+            randArray[6] = (byte)((power & 0xFF00) >> 8);
             randArray[7] = 0x10;
 
             if (!antDevice.getChannel(0).sendBroadcastData(randArray))
