@@ -1,12 +1,16 @@
 ﻿using System.IO.Ports;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
+using RJCP.IO.Ports;
 
 namespace ErgoRaceWin
 {
     public class Bike
     {
-        private Task communicationLoopTask;
+        private Task bikeCommunicationLoopTask;
+        private Task serialKeyPadCommunicationLoopTask;
         private readonly bool stopRequested = false;
         private readonly MainViewModel model;
 
@@ -17,10 +21,11 @@ namespace ErgoRaceWin
 
         public void StartCommunication()
         {
-            communicationLoopTask = Task.Run(() => CommunicationLoop());
+            bikeCommunicationLoopTask = Task.Run(() => BikeCommunicationLoop());
+            serialKeyPadCommunicationLoopTask = Task.Run(() => SerialKeyPadCommunicationLoop());
         }
 
-        public void CommunicationLoop()
+        public void BikeCommunicationLoop()
         {
             const int heartRateIndex = 0;
             const int cadenceIndex = 1;
@@ -28,9 +33,7 @@ namespace ErgoRaceWin
             const int currentPowerIndex = 7;
             const int esOffset = 4;
 
-            var serialPorts = SerialPort.GetPortNames();
-            var ergoRacePortName = serialPorts.FirstOrDefault();
-            var ergoRace = new SerialPort(ergoRacePortName);
+            var ergoRace = new SerialPort("COM3");
             ergoRace.Open();
 
             do
@@ -55,20 +58,55 @@ namespace ErgoRaceWin
 
             while (!stopRequested)
             {
-                ergoRace.WriteLine("PW 145");
+                ergoRace.WriteLine($"PW {model.UserTargetPower}");
                 var pwValues = ergoRace.ReadLine().Trim().Split('\t');
                 model.HeartRate = int.Parse(pwValues[heartRateIndex]);
                 model.Cadence = int.Parse(pwValues[cadenceIndex]);
-                model.TargetPower = int.Parse(pwValues[targetPowerIndex]);
+                model.BikeTargetPower = int.Parse(pwValues[targetPowerIndex]);
                 model.CurrentPower = int.Parse(pwValues[currentPowerIndex]);
 
                 ergoRace.WriteLine("ES1");
                 var esValues = ergoRace.ReadLine().Trim().Split('\t');
                 model.HeartRate = int.Parse(esValues[heartRateIndex + esOffset]);
                 model.Cadence = int.Parse(esValues[cadenceIndex + esOffset]);
-                model.TargetPower = int.Parse(esValues[targetPowerIndex + esOffset]);
+                model.BikeTargetPower = int.Parse(esValues[targetPowerIndex + esOffset]);
                 model.CurrentPower = int.Parse(esValues[currentPowerIndex + esOffset]);
             }
+        }
+
+        public async Task SerialKeyPadCommunicationLoop()
+        {
+            var lastDirection = Direction.None;
+
+            var stream = new SerialPortStream("COM4");
+            stream.Open();
+
+            while (!stopRequested)
+            {
+                var cts = stream.CtsHolding;
+                var dsr = stream.DsrHolding;
+                var ring = stream.RingHolding;
+                var cd = stream.CDHolding;
+                var direction = Direction.None;
+
+                if (cts && ring)
+                    direction = Direction.Up;
+                else if (dsr)
+                    direction = Direction.Down;
+                else if (cd)
+                    direction = Direction.Left;
+                else if (cts)
+                    direction = Direction.Right;
+
+                if (direction != lastDirection)
+                {
+                    model.KeyPadDirection = direction;
+                    lastDirection = direction;
+                }
+
+                await Task.Delay(1);
+            }
+
         }
     }
 }
