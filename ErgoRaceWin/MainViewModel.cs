@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace ErgoRaceWin
 {
     public class MainViewModel : ObservableObject
     {
         private readonly object lockObject = new object();
+        private DateTime clock;
         private int heartRate = 0;
         private int cadence = 0;
         private double gradient = 0.0;
@@ -13,11 +15,22 @@ namespace ErgoRaceWin
         private int currentPower = 0;
         private Direction keyPadDirection = Direction.None;
         private readonly bool stopRequested = false;
+        private Task clockLoopTask;
         private Task keyPadLoopTask;
 
         public MainViewModel()
         {
+            clockLoopTask = Task.Run(() => ClockLoop());
             keyPadLoopTask = Task.Run(() => KeyPadLoop());
+        }
+
+        private async Task ClockLoop()
+        {
+            while (!stopRequested)
+            {
+                Clock = DateTime.Now;
+                await Task.Delay(1000);
+            }
         }
 
         private async Task KeyPadLoop()
@@ -60,6 +73,20 @@ namespace ErgoRaceWin
                 lastDirection = keyPadDirection;
 
                 await Task.Delay(20);
+            }
+        }
+
+        public DateTime Clock
+        {
+            get => clock;
+            set
+            {
+                lock (lockObject)
+                {
+                    clock = value;
+                }
+
+                RaisePropertyChangedEvent("Clock");
             }
         }
 
