@@ -12,23 +12,39 @@
     </Window.DataContext>
     <Grid x:Name="MainGrid" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition />
-            <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="400" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <local:ScrollingTextBox x:Name="txtLog" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="399" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="400" VerticalScrollBarVisibility="Visible" />
-        <Label x:Name="txtGradient" Grid.Row="0" Grid.Column="1" Content="{Binding Path=Gradient}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <Label x:Name="txtCadence" Grid.Row="0" Grid.Column="2" Content="{Binding Path=Cadence}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <Label x:Name="txtUserTargetPower" Grid.Row="0" Grid.Column="3" Content="{Binding Path=UserTargetPower}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <Label x:Name="txtBikeTargetPower" Grid.Row="0" Grid.Column="4" Content="{Binding Path=BikeTargetPower}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <Label x:Name="txtCurrentPower" Grid.Row="0" Grid.Column="5" Content="{Binding Path=CurrentPower}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <Label x:Name="txtKeyPadDirection" Grid.Row="0" Grid.Column="6" Content="{Binding Path=KeyPadDirection}" FontSize="72" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Gradient" />
+            <Label x:Name="txtGradient" Content="{Binding Gradient}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Cadence" />
+            <Label x:Name="txtCadence" Content="{Binding Cadence}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Target Power" />
+            <Label x:Name="txtUserTargetPower" Content="{Binding UserTargetPower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Bike's Target" />
+            <Label x:Name="txtBikeTargetPower" Content="{Binding BikeTargetPower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="2">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Actual Power" />
+            <Label x:Name="txtCurrentPower" Content="{Binding CurrentPower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="0">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Clock" />
+            <Label x:Name="txtClock" Content="{Binding Clock}" ContentStringFormat="HH:mm:ss" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
     </Grid>
 </Window>
