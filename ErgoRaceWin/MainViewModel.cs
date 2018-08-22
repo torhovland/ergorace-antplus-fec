@@ -7,6 +7,7 @@ namespace ErgoRaceWin
         private readonly object lockObject = new object();
         private int heartRate = 0;
         private int cadence = 0;
+        private double gradient = 0.0;
         private int userTargetPower = 25;
         private int bikeTargetPower = 25;
         private int currentPower = 0;
@@ -87,6 +88,20 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("Cadence");
+            }
+        }
+
+        public double Gradient
+        {
+            get => gradient;
+            set
+            {
+                lock (lockObject)
+                {
+                    gradient = value;
+                }
+
+                RaisePropertyChangedEvent("Gradient");
             }
         }
 

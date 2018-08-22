@@ -176,15 +176,17 @@ namespace ErgoRaceWin
                     var lsb = response.messageContents[7];
                     var msb = response.messageContents[8];
                     var power = (msb * 256 + lsb) / 4.0;
+                    model.UserTargetPower = (int)Math.Round(power);
                     stringToPrint.AppendLine($"Target power set to {power} W.");
                 }
                 else if (controlPage == 0x33) // Track resistance
                 {
                     var lsb = response.messageContents[6];
                     var msb = response.messageContents[7];
-                    var grade = (msb * 256 + lsb) / 100.0 - 200.0;
-                    if (msb == 0xFF && lsb == 0xFF) grade = 0.0;
-                    stringToPrint.AppendLine($"Gradient set to {grade} %.");
+                    var gradient = (msb * 256 + lsb) / 100.0 - 200.0;
+                    if (msb == 0xFF && lsb == 0xFF) gradient = 0.0;
+                    model.Gradient = gradient;
+                    stringToPrint.AppendLine($"Gradient set to {gradient} %.");
                 }
                 else
                 {
