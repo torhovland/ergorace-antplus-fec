@@ -104,7 +104,7 @@ namespace ErgoRaceWin
             byte[] randArray = new byte[8];
             randArray[0] = 0x19; // Trainer Data Page
             randArray[1] = eventNumber;
-            randArray[2] = 78;
+            randArray[2] = (byte)model.Cadence;
             randArray[3] = 0;
             randArray[4] = 0;
             randArray[5] = (byte)power;
