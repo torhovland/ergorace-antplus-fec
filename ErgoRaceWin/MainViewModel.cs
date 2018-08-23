@@ -15,10 +15,14 @@ namespace ErgoRaceWin
         private int bikeTargetPower = 25;
         private int currentBikePower;
         private int currentCalculatedPower;
+        private int frontGear = 1;
+        private int rearGear = 1;
         private Direction keyPadDirection = Direction.None;
         private readonly bool stopRequested = false;
         private Task clockLoopTask;
         private Task keyPadLoopTask;
+        private int[] chainRings = { 39, 53 };
+        private int[] sprockets = { 40, 35, 31, 27, 24, 21, 19, 17, 15, 13, 11 };
 
         public MainViewModel()
         {
@@ -51,22 +55,22 @@ namespace ErgoRaceWin
                 if (keyPadDirection == Direction.Up)
                 {
                     if (streak == 0 || streak > repeatDelay)
-                        UserTargetPower++;
+                        UserTargetPower += 5;
                 }
                 else if (keyPadDirection == Direction.Down)
                 {
                     if (streak == 0 || streak > repeatDelay)
-                        UserTargetPower--;
+                        UserTargetPower -= 5;
                 }
                 else if (keyPadDirection == Direction.Left)
                 {
-                    if (streak == 0 || streak > repeatDelay)
-                        UserTargetPower -= 10;
+                    if (streak == 0)
+                        ShiftDown();
                 }
                 else if (keyPadDirection == Direction.Right)
                 {
-                    if (streak == 0 || streak > repeatDelay)
-                        UserTargetPower += 10;
+                    if (streak == 0)
+                        ShiftUp();
                 }
 
                 if (UserTargetPower < 0)
@@ -75,6 +79,36 @@ namespace ErgoRaceWin
                 lastDirection = keyPadDirection;
 
                 await Task.Delay(20);
+            }
+        }
+
+        void ShiftDown()
+        {
+            if (RearGear > 2)
+                RearGear--;
+            else if (RearGear > 1 && FrontGear == 1)
+                RearGear--;
+            else if (FrontGear > 1)
+            {
+                FrontGear--;
+
+                if (RearGear < 10)
+                    RearGear++;
+            }
+        }
+
+        void ShiftUp()
+        {
+            if (RearGear < 10)
+                RearGear++;
+            else if (RearGear < 11 && FrontGear == 2)
+                RearGear++;
+            else if (FrontGear == 1)
+            {
+                FrontGear++;
+
+                if (RearGear > 2)
+                    RearGear--;
             }
         }
 
@@ -150,6 +184,37 @@ namespace ErgoRaceWin
             }
         }
 
+        public int FrontGear
+        {
+            get => frontGear;
+            set
+            {
+                lock (lockObject)
+                {
+                    frontGear = value;
+                }
+
+                RaisePropertyChangedEvent("FrontGear");
+            }
+        }
+
+        public int RearGear
+        {
+            get => rearGear;
+            set
+            {
+                lock (lockObject)
+                {
+                    rearGear = value;
+                }
+
+                RaisePropertyChangedEvent("RearGear");
+            }
+        }
+
+        public int ChainRing => chainRings[FrontGear - 1];
+        public int Sprocket => sprockets[RearGear - 1];
+
         private void Calculate()
         {
             double v = 0.0;
@@ -166,11 +231,9 @@ namespace ErgoRaceWin
                 const double cd = .63;
                 const double a = .5;
                 const double rho = 1.226;
-                const int chainRing = 34;
-                const int sprocket = 16;
 
                 var w = bikeWeight + riderWeight;
-                v = Cadence / 60.0 * wheelCircumference * chainRing / sprocket;
+                v = Cadence / 60.0 * wheelCircumference * ChainRing / Sprocket;
                 var fGravity = g * w * Math.Sin(Math.Atan(Gradient));
                 var fRolling = g * w * crr * Math.Cos(Math.Atan(Gradient));
                 var fDrag = .5 * cd * a * rho * v * v;

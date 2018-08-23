@@ -32,7 +32,7 @@
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="2">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Speed" />
-            <Label x:Name="txtSpeed" Content="{Binding Speed}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Label x:Name="txtSpeed" Content="{Binding Speed}" ContentStringFormat="0.0" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Target Power" />
@@ -46,9 +46,17 @@
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Actual Power" />
             <Label x:Name="txtCurrentPower" Content="{Binding CurrentBikePower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="3">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Front Gear" />
+            <Label x:Name="txtFrontGear" Content="{Binding FrontGear}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
         <StackPanel Grid.Row="2" Grid.Column="0">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Clock" />
             <Label x:Name="txtClock" Content="{Binding Clock}" ContentStringFormat="HH:mm:ss" FontSize="100" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="3">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Rear Gear" />
+            <Label x:Name="txtRearGear" Content="{Binding RearGear}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
 </Window>
