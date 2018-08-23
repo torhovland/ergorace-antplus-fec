@@ -58,7 +58,7 @@ namespace ErgoRaceWin
 
             while (!stopRequested)
             {
-                ergoRace.WriteLine($"PW {model.CurrentCalculatedPower}");
+                ergoRace.WriteLine($"PW {model.TargetPower}");
                 var pwValues = ergoRace.ReadLine().Trim().Split('\t');
                 model.HeartRate = int.Parse(pwValues[heartRateIndex]);
                 model.Cadence = int.Parse(pwValues[cadenceIndex]);

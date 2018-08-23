@@ -11,10 +11,9 @@ namespace ErgoRaceWin
         private int cadence;
         private double gradient;
         private double speed;
-        private int userTargetPower = 25;
+        private int targetPower = 25;
         private int bikeTargetPower = 25;
         private int currentBikePower;
-        private int currentCalculatedPower;
         private int frontGear = 1;
         private int rearGear = 1;
         private Direction keyPadDirection = Direction.None;
@@ -55,12 +54,12 @@ namespace ErgoRaceWin
                 if (keyPadDirection == Direction.Up)
                 {
                     if (streak == 0 || streak > repeatDelay)
-                        UserTargetPower += 5;
+                        TargetPower += 5;
                 }
                 else if (keyPadDirection == Direction.Down)
                 {
                     if (streak == 0 || streak > repeatDelay)
-                        UserTargetPower -= 5;
+                        TargetPower -= 5;
                 }
                 else if (keyPadDirection == Direction.Left)
                 {
@@ -73,8 +72,8 @@ namespace ErgoRaceWin
                         ShiftUp();
                 }
 
-                if (UserTargetPower < 0)
-                    UserTargetPower = 0;
+                if (TargetPower < 0)
+                    TargetPower = 0;
 
                 lastDirection = keyPadDirection;
 
@@ -195,6 +194,7 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("FrontGear");
+                Calculate();
             }
         }
 
@@ -209,6 +209,7 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("RearGear");
+                Calculate();
             }
         }
 
@@ -240,21 +241,21 @@ namespace ErgoRaceWin
                 power = (fGravity + fRolling + fDrag) * v / (1 - driveTrainLoss);
             }
 
-            CurrentCalculatedPower = (int)Math.Round(power);
+            TargetPower = (int)Math.Round(power);
             Speed = v * 3600.0 / 1000.0;
         }
 
-        public int UserTargetPower
+        public int TargetPower
         {
-            get => userTargetPower;
+            get => targetPower;
             set
             {
                 lock (lockObject)
                 {
-                    userTargetPower = value;
+                    targetPower = value;
                 }
 
-                RaisePropertyChangedEvent("UserTargetPower");
+                RaisePropertyChangedEvent("TargetPower");
             }
         }
 
@@ -283,20 +284,6 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("CurrentBikePower");
-            }
-        }
-
-        public int CurrentCalculatedPower
-        {
-            get => currentCalculatedPower;
-            set
-            {
-                lock (lockObject)
-                {
-                    currentCalculatedPower = value;
-                }
-
-                RaisePropertyChangedEvent("CurrentCalculatedPower");
             }
         }
 

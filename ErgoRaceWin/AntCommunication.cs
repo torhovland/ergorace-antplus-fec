@@ -176,7 +176,7 @@ namespace ErgoRaceWin
                     var lsb = response.messageContents[7];
                     var msb = response.messageContents[8];
                     var power = (msb * 256 + lsb) / 4.0;
-                    model.UserTargetPower = (int)Math.Round(power);
+                    model.TargetPower = (int)Math.Round(power);
                     stringToPrint.AppendLine($"Target power set to {power} W.");
                 }
                 else if (controlPage == 0x33) // Track resistance

@@ -36,7 +36,7 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Target Power" />
-            <Label x:Name="txtUserTargetPower" Content="{Binding UserTargetPower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Label x:Name="txtTargetPower" Content="{Binding TargetPower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Bike's Target" />
