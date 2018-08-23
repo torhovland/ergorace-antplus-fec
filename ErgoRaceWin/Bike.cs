@@ -58,19 +58,19 @@ namespace ErgoRaceWin
 
             while (!stopRequested)
             {
-                ergoRace.WriteLine($"PW {model.UserTargetPower}");
+                ergoRace.WriteLine($"PW {model.CurrentCalculatedPower}");
                 var pwValues = ergoRace.ReadLine().Trim().Split('\t');
                 model.HeartRate = int.Parse(pwValues[heartRateIndex]);
                 model.Cadence = int.Parse(pwValues[cadenceIndex]);
                 model.BikeTargetPower = int.Parse(pwValues[targetPowerIndex]);
-                model.CurrentPower = int.Parse(pwValues[currentPowerIndex]);
+                model.CurrentBikePower = int.Parse(pwValues[currentPowerIndex]);
 
                 ergoRace.WriteLine("ES1");
                 var esValues = ergoRace.ReadLine().Trim().Split('\t');
                 model.HeartRate = int.Parse(esValues[heartRateIndex + esOffset]);
                 model.Cadence = int.Parse(esValues[cadenceIndex + esOffset]);
                 model.BikeTargetPower = int.Parse(esValues[targetPowerIndex + esOffset]);
-                model.CurrentPower = int.Parse(esValues[currentPowerIndex + esOffset]);
+                model.CurrentBikePower = int.Parse(esValues[currentPowerIndex + esOffset]);
             }
         }
 

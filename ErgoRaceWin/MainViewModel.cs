@@ -7,12 +7,14 @@ namespace ErgoRaceWin
     {
         private readonly object lockObject = new object();
         private DateTime clock;
-        private int heartRate = 0;
-        private int cadence = 0;
-        private double gradient = 0.0;
+        private int heartRate;
+        private int cadence;
+        private double gradient;
+        private double speed;
         private int userTargetPower = 25;
         private int bikeTargetPower = 25;
-        private int currentPower = 0;
+        private int currentBikePower;
+        private int currentCalculatedPower;
         private Direction keyPadDirection = Direction.None;
         private readonly bool stopRequested = false;
         private Task clockLoopTask;
@@ -115,6 +117,7 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("Cadence");
+                Calculate();
             }
         }
 
@@ -129,7 +132,53 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("Gradient");
+                Calculate();
             }
+        }
+
+        public double Speed
+        {
+            get => speed;
+            set
+            {
+                lock (lockObject)
+                {
+                    speed = value;
+                }
+
+                RaisePropertyChangedEvent("Speed");
+            }
+        }
+
+        private void Calculate()
+        {
+            double v = 0.0;
+            double power = 0.0;
+
+            lock (lockObject)
+            {
+                const double driveTrainLoss = .03;
+                const double wheelCircumference = 2.0;
+                const double bikeWeight = 10.0;
+                const double riderWeight = 80.0;
+                const double g = 9.8067;
+                const double crr = .005;
+                const double cd = .63;
+                const double a = .5;
+                const double rho = 1.226;
+                const int chainRing = 34;
+                const int sprocket = 16;
+
+                var w = bikeWeight + riderWeight;
+                v = Cadence / 60.0 * wheelCircumference * chainRing / sprocket;
+                var fGravity = g * w * Math.Sin(Math.Atan(Gradient));
+                var fRolling = g * w * crr * Math.Cos(Math.Atan(Gradient));
+                var fDrag = .5 * cd * a * rho * v * v;
+                power = (fGravity + fRolling + fDrag) * v / (1 - driveTrainLoss);
+            }
+
+            CurrentCalculatedPower = (int)Math.Round(power);
+            Speed = v * 3600.0 / 1000.0;
         }
 
         public int UserTargetPower
@@ -160,17 +209,31 @@ namespace ErgoRaceWin
             }
         }
 
-        public int CurrentPower
+        public int CurrentBikePower
         {
-            get => currentPower;
+            get => currentBikePower;
             set
             {
                 lock (lockObject)
                 {
-                    currentPower = value;
+                    currentBikePower = value;
                 }
 
-                RaisePropertyChangedEvent("CurrentPower");
+                RaisePropertyChangedEvent("CurrentBikePower");
+            }
+        }
+
+        public int CurrentCalculatedPower
+        {
+            get => currentCalculatedPower;
+            set
+            {
+                lock (lockObject)
+                {
+                    currentCalculatedPower = value;
+                }
+
+                RaisePropertyChangedEvent("CurrentCalculatedPower");
             }
         }
 

@@ -99,7 +99,7 @@ namespace ErgoRaceWin
 
         private void SetTrainerBroadcastMessage(byte eventNumber)
         {
-            var power = model.CurrentPower;
+            var power = model.CurrentBikePower;
 
             byte[] randArray = new byte[8];
             randArray[0] = 0x19; // Trainer Data Page
@@ -185,7 +185,7 @@ namespace ErgoRaceWin
                     var msb = response.messageContents[7];
                     var gradient = (msb * 256 + lsb) / 100.0 - 200.0;
                     if (msb == 0xFF && lsb == 0xFF) gradient = 0.0;
-                    model.Gradient = gradient;
+                    model.Gradient = gradient / 100.0;
                     stringToPrint.AppendLine($"Gradient set to {gradient} %.");
                 }
                 else

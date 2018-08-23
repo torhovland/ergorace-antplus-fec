@@ -24,11 +24,15 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Gradient" />
-            <Label x:Name="txtGradient" Content="{Binding Gradient}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Label x:Name="txtGradient" Content="{Binding Gradient}" ContentStringFormat="0.0 %" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Cadence" />
             <Label x:Name="txtCadence" Content="{Binding Cadence}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="2">
+            <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Speed" />
+            <Label x:Name="txtSpeed" Content="{Binding Speed}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Target Power" />
@@ -40,7 +44,7 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="2">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Actual Power" />
-            <Label x:Name="txtCurrentPower" Content="{Binding CurrentPower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <Label x:Name="txtCurrentPower" Content="{Binding CurrentBikePower}" FontSize="144" VerticalAlignment="Center" HorizontalAlignment="Center" />
         </StackPanel>
         <StackPanel Grid.Row="2" Grid.Column="0">
             <Label FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" Content="Clock" />
