@@ -129,6 +129,7 @@
     </ApplicationDefinition>
     <Compile Include="AntCommunication.cs" />
     <Compile Include="Bike.cs" />
+    <Compile Include="BikeCalculator.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="ObservableObject.cs" />

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ErgoRaceWin
 {
-    public class MainViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject
     {
         private readonly object lockObject = new object();
         private DateTime clock;
@@ -218,31 +218,8 @@ namespace ErgoRaceWin
 
         private void Calculate()
         {
-            double v = 0.0;
-            double power = 0.0;
-
-            lock (lockObject)
-            {
-                const double driveTrainLoss = .03;
-                const double wheelCircumference = 2.0;
-                const double bikeWeight = 10.0;
-                const double riderWeight = 80.0;
-                const double g = 9.8067;
-                const double crr = .005;
-                const double cd = .63;
-                const double a = .5;
-                const double rho = 1.226;
-
-                var w = bikeWeight + riderWeight;
-                v = Cadence / 60.0 * wheelCircumference * ChainRing / Sprocket;
-                var fGravity = g * w * Math.Sin(Math.Atan(Gradient));
-                var fRolling = g * w * crr * Math.Cos(Math.Atan(Gradient));
-                var fDrag = .5 * cd * a * rho * v * v;
-                power = (fGravity + fRolling + fDrag) * v / (1 - driveTrainLoss);
-            }
-
-            TargetPower = (int)Math.Round(power);
-            Speed = v * 3600.0 / 1000.0;
+            TargetPower = (int)Math.Round(BikeCalculator.CalculatePower(Cadence, Gradient, ChainRing, Sprocket));
+            Speed = BikeCalculator.CalculateSpeed(Cadence, ChainRing, Sprocket) * 3600.0 / 1000.0;
         }
 
         public int TargetPower
