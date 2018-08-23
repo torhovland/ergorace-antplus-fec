@@ -9,7 +9,7 @@ namespace ErgoRaceWin
         private DateTime clock;
         private int heartRate;
         private int cadence;
-        private double gradient;
+        private double gradient, previousGradient;
         private double speed;
         private int targetPower = 25;
         private int bikeTargetPower = 25;
@@ -150,7 +150,7 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("Cadence");
-                Calculate();
+                Calculate(true);
             }
         }
 
@@ -161,11 +161,12 @@ namespace ErgoRaceWin
             {
                 lock (lockObject)
                 {
+                    previousGradient = gradient;
                     gradient = value;
                 }
 
                 RaisePropertyChangedEvent("Gradient");
-                Calculate();
+                Calculate(true);
             }
         }
 
@@ -194,7 +195,7 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("FrontGear");
-                Calculate();
+                Calculate(false);
             }
         }
 
@@ -209,17 +210,33 @@ namespace ErgoRaceWin
                 }
 
                 RaisePropertyChangedEvent("RearGear");
-                Calculate();
+                Calculate(false);
             }
         }
 
         public int ChainRing => chainRings[FrontGear - 1];
         public int Sprocket => sprockets[RearGear - 1];
 
-        private void Calculate()
+        private void Calculate(bool doAutoShift)
         {
-            TargetPower = (int)Math.Round(BikeCalculator.CalculatePower(Cadence, Gradient, ChainRing, Sprocket));
+            const int minCadence = 80;
+            const int maxCadence = 90;
+
+            var power = (int)Math.Round(BikeCalculator.CalculatePower(Cadence, Gradient, ChainRing, Sprocket));
+
+            TargetPower = power;
             Speed = BikeCalculator.CalculateSpeed(Cadence, ChainRing, Sprocket) * 3600.0 / 1000.0;
+
+            var minPower = BikeCalculator.CalculatePower(minCadence, Gradient, ChainRing, Sprocket);
+            var maxPower = BikeCalculator.CalculatePower(maxCadence, Gradient, ChainRing, Sprocket);
+
+            if (!doAutoShift)
+                return;
+
+            if (CurrentBikePower < minPower)
+                ShiftDown();
+            else if (CurrentBikePower > maxPower)
+                ShiftUp();
         }
 
         public int TargetPower
