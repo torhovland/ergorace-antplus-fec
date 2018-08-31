@@ -183,6 +183,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy D:\Downloads\ANT-SDK_PC.3.5\Bin\ANT_NET.dll .
-copy D:\Downloads\ANT-SDK_PC.3.5\Bin\ANT_WrappedLib.dll .</PostBuildEvent>
+copy D:\Downloads\ANT-SDK_PC.3.5\Bin\ANT_WrappedLib.dll .
+copy D:\Downloads\ANT-SDK_PC.3.5\Bin\DSI_CP210xManufacturing_3_1.dll .
+copy D:\Downloads\ANT-SDK_PC.3.5\Bin\DSI_SiUSBXp_3_1.dll .</PostBuildEvent>
   </PropertyGroup>
 </Project>
