@@ -20,7 +20,8 @@ namespace ErgoRaceWin
         private readonly bool stopRequested = false;
         private Task clockLoopTask;
         private Task keyPadLoopTask;
-        private int[] chainRings = { 39, 53 };
+        private int[] chainRings = { 39, 53 }; // Tor
+        // private int[] chainRings = { 24, 34 }; // Nina
         private int[] sprockets = { 40, 35, 31, 27, 24, 21, 19, 17, 15, 13, 11 };
 
         public MainViewModel()
@@ -219,8 +220,8 @@ namespace ErgoRaceWin
 
         private void Calculate(bool doAutoShift)
         {
-            const int minCadence = 80;
-            const int maxCadence = 90;
+            const int minCadence = 70;
+            const int maxCadence = 95;
 
             var power = (int)Math.Round(BikeCalculator.CalculatePower(Cadence, Gradient, ChainRing, Sprocket));
 

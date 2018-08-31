@@ -8,7 +8,7 @@ namespace ErgoRaceWin
         {
             public static double CalculateSpeed(int cadence, int chainRing, int sprocket)
             {
-                const double wheelCircumference = 2.0;
+                const double wheelCircumference = 2.07;
                 return cadence / 60.0 * wheelCircumference * chainRing / sprocket;
             }
 
@@ -16,7 +16,8 @@ namespace ErgoRaceWin
             {
                 const double driveTrainLoss = .03;
                 const double bikeWeight = 10.0;
-                const double riderWeight = 80.0;
+                const double riderWeight = 85.0; // Tor
+                // const double riderWeight = 58.0; // Nina
                 const double g = 9.8067;
                 const double crr = .005;
                 const double cd = .63;
