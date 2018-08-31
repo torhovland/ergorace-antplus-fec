@@ -12,6 +12,7 @@ namespace ErgoRaceWin
         private readonly MainViewModel model;
         ANT_Device antDevice;
         private byte eventNumber = 0;
+        private int accumulatedPower = 0;
 
         delegate void dAppendText(String toAppend);
 
@@ -28,7 +29,8 @@ namespace ErgoRaceWin
             antDevice.deviceResponse += new ANT_Device.dDeviceResponseHandler(device0_deviceResponse);
             antDevice.getChannel(0).channelResponse += new dChannelResponseHandler(d0channel0_channelResponse);
             threadSafePrintLine("ANT+ USB Device Connected");
-            setupAndOpen(antDevice, ANT_ReferenceLibrary.ChannelType.BASE_Master_Transmit_0x10);
+            setupAndOpen(antDevice, ANT_ReferenceLibrary.ChannelType.BASE_Master_Transmit_0x10, 17, 0); // FE-C
+            setupAndOpen(antDevice, ANT_ReferenceLibrary.ChannelType.BASE_Master_Transmit_0x10, 11, 1); // Power
             SetNextBroadcastMessage();
         }
 
@@ -72,6 +74,8 @@ namespace ErgoRaceWin
             else
                 SetTrainerBroadcastMessage(eventNumber);
 
+            SetPowerBroadcastMessage(eventNumber);
+
             eventNumber++;
         }
 
@@ -83,17 +87,17 @@ namespace ErgoRaceWin
             //you receive an EVENT_TX message
             //The sendBroadcast function sets the buffer. On a slave device, a single broadcast
             //message will be sent.
-            byte[] randArray = new byte[8];
-            randArray[0] = 0x10; // General FE Data Page
-            randArray[1] = 25; // Trainer
-            randArray[2] = 0;
-            randArray[3] = 0;
-            randArray[4] = 0xFF;
-            randArray[5] = 0xFF;
-            randArray[6] = 0xFF;
-            randArray[7] = 0x18;
+            byte[] fecArray = new byte[8];
+            fecArray[0] = 0x10; // General FE Data Page
+            fecArray[1] = 25; // Trainer
+            fecArray[2] = 0;
+            fecArray[3] = 0;
+            fecArray[4] = 0xFF;
+            fecArray[5] = 0xFF;
+            fecArray[6] = 0xFF;
+            fecArray[7] = 0x18;
 
-            if (!antDevice.getChannel(0).sendBroadcastData(randArray))
+            if (!antDevice.getChannel(0).sendBroadcastData(fecArray))
                 threadSafePrintLine("Broadcast Message Failed");
         }
 
@@ -101,17 +105,39 @@ namespace ErgoRaceWin
         {
             var power = model.CurrentBikePower;
 
-            byte[] randArray = new byte[8];
-            randArray[0] = 0x19; // Trainer Data Page
-            randArray[1] = eventNumber;
-            randArray[2] = (byte)model.Cadence;
-            randArray[3] = 0;
-            randArray[4] = 0;
-            randArray[5] = (byte)power;
-            randArray[6] = (byte)((power & 0xFF00) >> 8);
-            randArray[7] = 0x10;
+            byte[] fecArray = new byte[8];
+            fecArray[0] = 0x19; // Trainer Data Page
+            fecArray[1] = eventNumber;
+            fecArray[2] = (byte)model.Cadence;
+            fecArray[3] = 0;
+            fecArray[4] = 0;
+            fecArray[5] = (byte)power;
+            fecArray[6] = (byte)((power & 0xFF00) >> 8);
+            fecArray[7] = 0x10;
 
-            if (!antDevice.getChannel(0).sendBroadcastData(randArray))
+            if (!antDevice.getChannel(0).sendBroadcastData(fecArray))
+                threadSafePrintLine("Broadcast Message Failed");
+        }
+
+        private void SetPowerBroadcastMessage(byte eventNumber)
+        {
+            var power = model.CurrentBikePower;
+            accumulatedPower += power;
+
+            if (accumulatedPower >= 65536)
+                accumulatedPower -= 65536;
+
+            byte[] powerArray = new byte[8];
+            powerArray[0] = 0x10; // General Power Data Page
+            powerArray[1] = eventNumber;
+            powerArray[2] = 0xFF;
+            powerArray[3] = (byte)model.Cadence;
+            powerArray[4] = (byte)accumulatedPower;
+            powerArray[5] = (byte)((accumulatedPower & 0xFF00) >> 8);
+            powerArray[6] = (byte)power;
+            powerArray[7] = (byte)((power & 0xFF00) >> 8);
+
+            if (!antDevice.getChannel(1).sendBroadcastData(powerArray))
                 threadSafePrintLine("Broadcast Message Failed");
         }
 
@@ -201,7 +227,7 @@ namespace ErgoRaceWin
             return stringToPrint.ToString();
         }
 
-        private void setupAndOpen(ANT_Device deviceToSetup, ANT_ReferenceLibrary.ChannelType channelType)
+        private void setupAndOpen(ANT_Device deviceToSetup, ANT_ReferenceLibrary.ChannelType channelType, byte deviceTypeId, int channelNumber)
         {
             //We try-catch and forward exceptions to the calling function to handle and pass the errors to the user
             try
@@ -209,7 +235,7 @@ namespace ErgoRaceWin
                 //To access an ANTChannel on a paticular device we need to get the channel from the device
                 //Once again, this ensures you have a valid object associated with a real-world ANTChannel
                 //ie: You can only get channels that actually exist
-                ANT_Channel channel0 = deviceToSetup.getChannel(0);
+                ANT_Channel channel = deviceToSetup.getChannel(channelNumber);
 
                 //Almost all functions in the library have two overloads, one with a response wait time and one without
                 //If you give a wait time, you can check the return value for success or failure of the command, however
@@ -223,7 +249,7 @@ namespace ErgoRaceWin
                 //So, first we assign the channel, we have already been passed the channelType which is an enum that has various flags
                 //If we were doing something more advanced we could use a bitwise or ie:base|adv1|adv2 here too
                 //We also use net 0 which has the public network key by default
-                if (channel0.assignChannel(channelType, 0, 500))
+                if (channel.assignChannel(channelType, 0, 500))
                     threadSafePrintLine("Ch assigned to " + channelType + " on net 0.");
                 else
                     throw new Exception("Channel assignment operation failed.");
@@ -234,21 +260,21 @@ namespace ErgoRaceWin
                 //For now we pick an arbitrary id so that we can ensure we match between the two devices.
                 //The pairing bit ensures on a search that you only pair with devices that also are requesting
                 //pairing, but we don't need it here so we set it to false
-                if (channel0.setChannelID(12345, false, 17, 5, 500))
+                if (channel.setChannelID(12345, false, deviceTypeId, 5, 500))
                     threadSafePrintLine("Set channel ID to 12345, 17, 5");
                 else
                     throw new Exception("Set Channel ID operation failed.");
 
                 //Setting the channel period isn't mandatory, but we set it slower than the default period so messages aren't coming so fast
                 //The period parameter is divided by 32768 to set the period of a message in seconds. So here, 16384/32768 = 1/2 sec/msg = 2Hz
-                if (channel0.setChannelPeriod(8192, 500))
+                if (channel.setChannelPeriod(8192, 500))
                     threadSafePrintLine("Message Period set to 8192/32768 seconds per message");
 
-                if (channel0.setChannelFreq(57, 500))
+                if (channel.setChannelFreq(57, 500))
                     threadSafePrintLine("Frequency set to 57");
 
                 //Now we open the channel
-                if (channel0.openChannel(500))
+                if (channel.openChannel(500))
                     threadSafePrintLine("Opened Channel" + Environment.NewLine);
                 else
                     throw new Exception("Channel Open operation failed.");
