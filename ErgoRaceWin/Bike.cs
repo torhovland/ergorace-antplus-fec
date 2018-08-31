@@ -33,7 +33,8 @@ namespace ErgoRaceWin
             const int currentPowerIndex = 7;
             const int esOffset = 4;
 
-            var ergoRace = new SerialPort("COM3");
+            var portNames = SerialPort.GetPortNames();
+            var ergoRace = new SerialPort("COM4");
             ergoRace.Open();
 
             do
@@ -78,7 +79,7 @@ namespace ErgoRaceWin
         {
             var lastDirection = Direction.None;
 
-            var stream = new SerialPortStream("COM4");
+            var stream = new SerialPortStream("COM3");
             stream.Open();
 
             while (!stopRequested)
