@@ -214,6 +214,11 @@ namespace ErgoRaceWin
                     model.Gradient = gradient / 100.0;
                     stringToPrint.AppendLine($"Gradient set to {gradient} %.");
                 }
+                else if (controlPage == 0x37) // User config
+                {
+                    // Not interested in any of that.
+                    stringToPrint.AppendLine("User config received");
+                }
                 else
                 {
                     throw new NotImplementedException($"Control page {controlPage}.");
