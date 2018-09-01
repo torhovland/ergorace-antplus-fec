@@ -11,6 +11,7 @@ namespace ErgoRaceWin
         private int cadence;
         private double gradient, previousGradient;
         private double speed;
+        private bool ergMode = false;
         private int targetPower = 25;
         private int bikeTargetPower = 25;
         private int currentBikePower;
@@ -47,36 +48,39 @@ namespace ErgoRaceWin
 
             while (!stopRequested)
             {
-                if (keyPadDirection == lastDirection)
-                    streak++;
-                else
-                    streak = 0;
+                if (!ergMode)
+                {
+                    if (keyPadDirection == lastDirection)
+                        streak++;
+                    else
+                        streak = 0;
 
-                if (keyPadDirection == Direction.Up)
-                {
-                    if (streak == 0 || streak > repeatDelay)
-                        TargetPower += 5;
-                }
-                else if (keyPadDirection == Direction.Down)
-                {
-                    if (streak == 0 || streak > repeatDelay)
-                        TargetPower -= 5;
-                }
-                else if (keyPadDirection == Direction.Left)
-                {
-                    if (streak == 0)
-                        ShiftDown();
-                }
-                else if (keyPadDirection == Direction.Right)
-                {
-                    if (streak == 0)
-                        ShiftUp();
-                }
+                    if (keyPadDirection == Direction.Up)
+                    {
+                        if (streak == 0 || streak > repeatDelay)
+                            TargetPower += 5;
+                    }
+                    else if (keyPadDirection == Direction.Down)
+                    {
+                        if (streak == 0 || streak > repeatDelay)
+                            TargetPower -= 5;
+                    }
+                    else if (keyPadDirection == Direction.Left)
+                    {
+                        if (streak == 0)
+                            ShiftDown();
+                    }
+                    else if (keyPadDirection == Direction.Right)
+                    {
+                        if (streak == 0)
+                            ShiftUp();
+                    }
 
-                if (TargetPower < 0)
-                    TargetPower = 0;
+                    if (TargetPower < 0)
+                        TargetPower = 0;
 
-                lastDirection = keyPadDirection;
+                    lastDirection = keyPadDirection;
+                }
 
                 await Task.Delay(20);
             }
@@ -225,7 +229,9 @@ namespace ErgoRaceWin
 
             var power = (int)Math.Round(BikeCalculator.CalculatePower(Cadence, Gradient, ChainRing, Sprocket));
 
-            TargetPower = power;
+            if (!ergMode)
+                TargetPower = power;
+
             Speed = BikeCalculator.CalculateSpeed(Cadence, ChainRing, Sprocket) * 3600.0 / 1000.0;
 
             var minPower = BikeCalculator.CalculatePower(minCadence, Gradient, ChainRing, Sprocket);
@@ -238,6 +244,20 @@ namespace ErgoRaceWin
                 ShiftDown();
             else if (CurrentBikePower > maxPower)
                 ShiftUp();
+        }
+
+        public bool ErgMode
+        {
+            get => ergMode;
+            set
+            {
+                lock (lockObject)
+                {
+                    ergMode = value;
+                }
+
+                RaisePropertyChangedEvent("ErgMode");
+            }
         }
 
         public int TargetPower
